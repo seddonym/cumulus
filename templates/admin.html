@@ -20,11 +20,10 @@
 {% end %}
 
 {% block body %}
-  <h3>Variables</h3>
   <ul class="archive">
-    {% for variable in variables %}
+    {% for word in words %}
       <li>
-        {{ variable }}
+        {{ word.hash }}
       </li>
     {% end %}
   </ul>
