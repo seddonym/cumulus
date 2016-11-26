@@ -1,0 +1,5 @@
+lib
+app.yaml
+*.pyc
+/.project
+/.pydevproject
