@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
-{% block body %}
-  <p>Search a site.</p>
+{% block content %}
+  <div class="jumbotron">
+      <div class="container">
+        <h1>Welcome to Cumulus!</h1>
+        <p>Here you can create a tag cloud from any URL on the internet.</p>
+        
+        <form>
+          <div class="form-group">
+            <label for="input-url">URL</label>
+            <input type="text" class="form-control" id="input-url" placeholder="Enter a URL">
+          </div>
+          <button type="submit" class="btn btn-lg btn-primary">Create tag cloud</button>
+        </form>
+      
+      </div>
+    </div>
 {% end %}
