@@ -12,6 +12,7 @@ from collections import Counter
 import urllib
 from bs4 import BeautifulSoup
 from google.appengine.api import users
+from models import save_words
 
 
 def administrator(method):
@@ -81,8 +82,9 @@ class HomeHandler(BaseHandler):
         
         most_common = Counter(cleaned_words).most_common(100)
         
+        # Save words
+        save_words(most_common)
         
-        # TODO - handle upper/lowercase
         words = []
         for text, weight in most_common:
             words.append({
