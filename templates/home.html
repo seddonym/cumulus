@@ -37,7 +37,7 @@
         <script type="text/javascript">
             var word_list = new Array(
                 {% for index, word in enumerate(words) %}
-                    {text: "{{ word['text'] }}-{{index}}", weight: {{ word['weight'] }}}{% if index < len(words) -1  %},{% end %}                 
+                    {text: "{{ word['text'] }}", weight: {{ word['weight'] }}}{% if index < len(words) -1  %},{% end %}                 
                 {% end %}
             );
             $(document).ready(function() {

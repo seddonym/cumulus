@@ -7,7 +7,10 @@ import tornado.escape
 import tornado.web
 import tornado.wsgi
 import unicodedata
-
+from collections import Counter
+import re
+import urllib
+from bs4 import BeautifulSoup
 from google.appengine.api import users
 
 
@@ -53,9 +56,20 @@ class HomeHandler(BaseHandler):
 
     def post(self):
         url = self.get_argument('url')
-        results = {'speak': 3, 'sandwich': 9, 'jam': 1}
+        html = urllib.urlopen(url).read()
+        soup = BeautifulSoup(html)
+        
+        # kill all script and style elements
+        for script in soup(["script", "style"]):
+            script.extract()    # rip it out
+        
+        # get text
+        text = soup.get_text()
+        all_words = re.findall(r'\w+', text)
+        most_common = Counter(all_words).most_common(100)
+        # TODO - handle upper/lowercase
         words = []
-        for text, weight in results.items():
+        for text, weight in most_common:
             words.append({
                 'text': text,
                 'weight': weight,
