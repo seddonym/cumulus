@@ -10,19 +10,22 @@
         <h1>Welcome to Cumulus!</h1>
         <p>Here you can create a word cloud from any URL on the internet.</p>
         <div class='row'>
-            <div class='col-lg-6 col-lg-offset-3'>
                 {% if url %}
                     <h2>Your word cloud for <span style='font-family: monospace;'>{{ url }}</span>:</h2>
-                    <div id='wordcloud'></div>
-                    <a href='/' class='btn btn-lg btn-default'>Create another</a>
+                        <div class='col-lg-8 col-lg-offset-2'>
+                            <div id='wordcloud'></div>
+                            <a href='/' class='btn btn-lg btn-default'>Create another</a>
+                        </div>
                 {% else %}
-                    <form method='post'>
-                      {% module xsrf_form_html() %}
-                      <div class="form-group">
-                        <input type="text" class="form-control" id="input-url" name='url' placeholder="Enter a URL">
-                      </div>
-                      <button type="submit" class="btn btn-lg btn-primary">Create tag cloud</button>
-                    </form>                
+                    <div class='col-lg-8 col-lg-offset-2'>
+                        <form method='post'>
+                          {% module xsrf_form_html() %}
+                          <div class="form-group">
+                            <input type="text" class="form-control" id="input-url" name='url' placeholder="Enter a URL">
+                          </div>
+                          <button type="submit" class="btn btn-lg btn-primary">Create tag cloud</button>
+                        </form>
+                    </div>                
                 {% end %}
         
             </div>

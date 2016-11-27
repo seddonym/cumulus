@@ -8,7 +8,7 @@ import tornado.web
 import tornado.wsgi
 import unicodedata
 from collections import Counter
-import re
+# import nltk
 import urllib
 from bs4 import BeautifulSoup
 from google.appengine.api import users
@@ -66,7 +66,22 @@ class HomeHandler(BaseHandler):
         # get text
         text = soup.get_text()
         all_words = re.findall(r'\w+', text)
-        most_common = Counter(all_words).most_common(100)
+        
+#         tagged_words = nltk.pos_tag(all_words)
+#         cleaned_words = []
+#         PRESERVE_CASE_TYPES = ('NNP', 'NNPS')
+#         INCLUDE_TYPES_STARTS_WITH = ('NN', 'VB')
+#         for word, word_type in tagged_words:
+#             if any([word_type.startswith(i) for i in INCLUDE_TYPES_STARTS_WITH]):
+#                 if word_type not in PRESERVE_CASE_TYPES:
+#                     word = word.lower()
+#                 cleaned_words.append(word)
+        # TODO - improve
+        cleaned_words = [word.lower() for word in all_words]
+        
+        most_common = Counter(cleaned_words).most_common(100)
+        
+        
         # TODO - handle upper/lowercase
         words = []
         for text, weight in most_common:
