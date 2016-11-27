@@ -7,6 +7,7 @@
     <title>{{ handler.settings["site_title"] }}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/project.css"/>
     {% block head %}{% end %}
   </head>
   <body>
@@ -23,7 +24,7 @@
         </div>
         <ul class="nav navbar-nav navbar-right">
             {% if not current_user %}
-              <li>{% raw _('<a href="%(url)s">Sign in</a> to compose/edit') % {"url": escape(users.create_login_url(request.uri))} %}</li>
+              <li>{% raw _('<a href="%(url)s">Sign in</a>') % {"url": escape(users.create_login_url(request.uri))} %}</li>
             {% else %}
               {% if current_user.administrator %}
                 <li><a href="/admin">{{ _("Admin") }}</a></li>
@@ -48,5 +49,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    {% block bottom %}{% end %}
   </body>
 </html>

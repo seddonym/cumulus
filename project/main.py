@@ -49,83 +49,24 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class HomeHandler(BaseHandler):
     def get(self):
-        self.render("home.html")
+        self.render("home.html", url=None)
 
     def post(self):
-        key = self.get_argument("key", None)
-        if key:
-            entry = Entry.get(key)
-            entry.title = self.get_argument("title")
-            entry.body_source = self.get_argument("body_source")
-            entry.html = tornado.escape.linkify(
-                self.get_argument("body_source"))
-        else:
-            title = self.get_argument("title")
-            slug = unicodedata.normalize("NFKD", title).encode(
-                "ascii", "ignore")
-            slug = re.sub(r"[^\w]+", " ", slug)
-            slug = "-".join(slug.lower().strip().split())
-            if not slug: slug = "entry"
-            while True:
-                existing = db.Query(Entry).filter("slug =", slug).get()
-                if not existing or str(existing.key()) == key:
-                    break
-                slug += "-2"
-            entry = Entry(
-                author=self.current_user,
-                title=title,
-                slug=slug,
-                body_source=self.get_argument("body_source"),
-                html=tornado.escape.linkify(self.get_argument("body_source")),
-            )
-        entry.put()
-        self.redirect("/entry/" + entry.slug)
+        url = self.get_argument('url')
+        results = {'speak': 3, 'sandwich': 9, 'jam': 1}
+        words = []
+        for text, weight in results.items():
+            words.append({
+                'text': text,
+                'weight': weight,
+            })
+        self.render("home.html", url=url, words=words)
 
 
 class AdminHandler(BaseHandler):
     @administrator
     def get(self):
         self.render("admin.html", words=[])
-
-
-
-# class ComposeHandler(BaseHandler):
-#     @administrator
-#     def get(self):
-#         key = self.get_argument("key", None)
-#         entry = Entry.get(key) if key else None
-#         self.render("compose.html", entry=entry)
-# 
-#     @administrator
-#     def post(self):
-#         key = self.get_argument("key", None)
-#         if key:
-#             entry = Entry.get(key)
-#             entry.title = self.get_argument("title")
-#             entry.body_source = self.get_argument("body_source")
-#             entry.html = tornado.escape.linkify(
-#                 self.get_argument("body_source"))
-#         else:
-#             title = self.get_argument("title")
-#             slug = unicodedata.normalize("NFKD", title).encode(
-#                 "ascii", "ignore")
-#             slug = re.sub(r"[^\w]+", " ", slug)
-#             slug = "-".join(slug.lower().strip().split())
-#             if not slug: slug = "entry"
-#             while True:
-#                 existing = db.Query(Entry).filter("slug =", slug).get()
-#                 if not existing or str(existing.key()) == key:
-#                     break
-#                 slug += "-2"
-#             entry = Entry(
-#                 author=self.current_user,
-#                 title=title,
-#                 slug=slug,
-#                 body_source=self.get_argument("body_source"),
-#                 html=tornado.escape.linkify(self.get_argument("body_source")),
-#             )
-#         entry.put()
-#         self.redirect("/entry/" + entry.slug)
 
 
 settings = {
