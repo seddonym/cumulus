@@ -54,7 +54,7 @@ To run the development server, create an ``app.yaml`` file in the following form
       version: "2.6"
     
     env_variables:
-        CLOUDSQL_CONNECTION_NAME: cumulus-150709:europe-west1:cumulus-mysql
+        CLOUDSQL_CONNECTION_NAME: <google-cloud-connection-name>
         CLOUDSQL_USER: <username>
         CLOUDSQL_PASSWORD: <password>
         CLOUDSQL_DATABASE: <local_database_name>
