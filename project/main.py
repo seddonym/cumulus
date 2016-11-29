@@ -59,7 +59,10 @@ class HomeHandler(BaseHandler):
 
     def post(self):
         url = self.get_argument('url')
-        html = urllib.urlopen(url).read()
+        try:
+            html = urllib.urlopen(url).read()
+        except:
+            self.render("home.html", url=url, error=True)
         soup = BeautifulSoup(html, 'html.parser')
         
         # kill all script and style elements
@@ -94,7 +97,7 @@ class HomeHandler(BaseHandler):
                 'text': text,
                 'weight': weight,
             })
-        self.render("home.html", url=url, words=words)
+        self.render("home.html", url=url, words=words, error=False)
 
 
 class ArchiveHandler(BaseHandler):

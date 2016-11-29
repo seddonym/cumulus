@@ -12,10 +12,16 @@
         <div class='row'>
                 {% if url %}
                     <h2>Your word cloud for <span style='font-family: monospace;'>{{ url }}</span>:</h2>
-                        <div class='col-lg-8 col-lg-offset-2'>
+                    <div class='col-lg-8 col-lg-offset-2'>
+                        {% if error %}
+                            <div class='alert alert-danger'>
+                                <p>Sorry, we could not get that URL.  Please try again.</p>
+                            </div>
+                        {% else %}
                             <div id='wordcloud'></div>
-                            <a href='/' class='btn btn-lg btn-default'>Create another</a>
-                        </div>
+                        {% end %}
+                        <a href='/' class='btn btn-lg btn-default'>Create another</a>
+                    </div>
                 {% else %}
                     <div class='col-lg-8 col-lg-offset-2'>
                         <form method='post'>
@@ -35,7 +41,7 @@
 {% end %}
 
 {% block bottom %}
-    {% if url %}
+    {% if url and not error %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.min.js"></script>
         <script type="text/javascript">
             var word_list = new Array(
