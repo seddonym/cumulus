@@ -66,6 +66,7 @@ class HomeHandler(BaseHandler):
             html = urllib.urlopen(url).read()
         except:
             self.render("home.html", url=url, error=True)
+            return
         soup = BeautifulSoup(html, 'html.parser')
 
         # Remove script and style elements

@@ -20,7 +20,7 @@ def create_cloudsql_engine():
         'database': CLOUDSQL_DATABASE,
     }
     if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
-        connection_string = 'mysql+mysqldb://{user}:{password}@{database}' \
+        connection_string = 'mysql+mysqldb://{user}:{password}@/{database}' \
             '?unix_socket=/cloudsql/{connection_name}'.format(**credentials)
     # If the unix socket is unavailable, then try to connect using TCP. This
     # will work if you're running a local MySQL server or using the Cloud SQL

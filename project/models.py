@@ -16,7 +16,10 @@ Session = sessionmaker(bind=create_cloudsql_engine())
 session = Session()
 
 
-keypair = RSA.importKey(WORD_PRIVATE_KEY)
+if WORD_PRIVATE_KEY:
+    keypair = RSA.importKey(WORD_PRIVATE_KEY)
+else:
+    keypair = None
 
 
 class Word(Base):
