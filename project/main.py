@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import functools
+from decimal import Decimal, ROUND_UP
 import os.path
 import re
 import tornado.escape
@@ -8,11 +9,12 @@ import tornado.web
 import tornado.wsgi
 import unicodedata
 from collections import Counter
+from sqlalchemy import desc
 # import nltk
 import urllib
 from bs4 import BeautifulSoup
 from google.appengine.api import users
-from models import save_words
+from models import save_words, session, Word
 
 
 def administrator(method):
@@ -95,10 +97,25 @@ class HomeHandler(BaseHandler):
         self.render("home.html", url=url, words=words)
 
 
-class AdminHandler(BaseHandler):
+class ArchiveHandler(BaseHandler):
+    RESULTS_PER_PAGE = 30
+     
     @administrator
     def get(self):
-        self.render("admin.html", words=[])
+        page = int(self.get_argument('page', default=1))
+        all_words = session.query(Word).order_by(desc('frequency'))
+        word_count = all_words.count()
+        number_of_pages = int((Decimal(word_count) / self.RESULTS_PER_PAGE).quantize(1, ROUND_UP))
+        print('Page %s' % page)
+        print('Number of pages %s' % number_of_pages)
+        if page > number_of_pages:
+            raise tornado.web.HTTPError(404)
+        offset = self.RESULTS_PER_PAGE * (page - 1)
+        words = all_words.limit(self.RESULTS_PER_PAGE) \
+                .offset(offset)
+        self.render("archive.html",
+                    words=words, page=page, word_count=word_count,
+                    number_of_pages=number_of_pages)
 
 
 settings = {
@@ -109,7 +126,7 @@ settings = {
 }
 application = tornado.web.Application([
     (r"/", HomeHandler),
-    (r"/admin", AdminHandler),
+    (r"/archive", ArchiveHandler),
 ], **settings)
 
 application = tornado.wsgi.WSGIAdapter(application)

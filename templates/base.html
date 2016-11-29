@@ -27,7 +27,7 @@
               <li>{% raw _('<a href="%(url)s">Sign in</a>') % {"url": escape(users.create_login_url(request.uri))} %}</li>
             {% else %}
               {% if current_user.administrator %}
-                <li><a href="/admin">{{ _("Admin") }}</a></li>
+                <li><a href="/admin">{{ _("Archive") }}</a></li>
               {% end %}
               <li><a href="{{ users.create_logout_url(request.uri) }}">{{ _("Sign out") }}</a></li>
             {% end %}
@@ -36,13 +36,6 @@
     </nav>
 
     {% block content %}{% end %}
-
-    <div class='container'>
-      <footer>
-        <p>Technical test by David Seddon, November 26 2016.</p>
-      </footer>
-    </div> <!-- /container -->
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

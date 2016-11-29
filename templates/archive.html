@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+        
+{% block content %}
+    <div class="container container-main">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Archive</h1>
+    
+                {% if word_count %}
+                    <h5>Page {{ page }} of {{ number_of_pages }}</h5>
+                    
+                    <table class="table table-striped">
+                      <thead>
+                        <th>Word</th>
+                        <th>Frequency</th>
+                      </thead>
+                      <tbody>
+                        {% for word in words %}
+                          <tr>
+                            <td><span class='label label-default'>{{ word.decrypted_text }}</span></td>
+                            <td>{{ word.frequency }}</td>
+                          </tr>
+                        {% end %}
+                      </tbody>
+                    </table>
+
+                    {% if page > 1 %}
+                        <a class='btn btn-sm btn-default' href='archive?page={{ page - 1 }}'>&lt; Previous</a>
+                    {% end %}
+                    {% if page < number_of_pages %}
+                        <a class='btn btn-sm btn-default' href='archive?page={{ page + 1 }}'>Next &gt;</a>
+                    {% end %}              
+
+                {% else %}
+                    <div class='well'>
+                        <p>There are no words yet.</p>
+                    </div>
+                {% end %}
+                
+            </div>
+        </div>
+    </div>
+{% end %}

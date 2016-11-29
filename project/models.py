@@ -43,9 +43,9 @@ class Word(Base):
         #                                                       length=cls.MAX_WORD_LENGTH))
         return keypair.encrypt(text.encode('UTF'), 32)[0]
     
-    @classmethod
-    def decrypt_text(cls, text):
-        return keypair.decrypt(text)
+    @property
+    def decrypted_text(self):
+        return keypair.decrypt(self.encrypted_text)
     
     def __repr__(self):
         return "<Word {}>".format(self.hash_id)
