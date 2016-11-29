@@ -7,7 +7,17 @@
                 <h1>Archive</h1>
     
                 {% if word_count %}
-                    <h5>Page {{ page }} of {{ number_of_pages }}</h5>
+                    <div class='pull-left'>
+                        <h5>Page {{ page }} of {{ number_of_pages }}</h5>
+                    </div>
+                    <div class='pull-right'>
+                        {% if page > 1 %}
+                            <a class='btn btn-sm btn-default' href='archive?page={{ page - 1 }}'>&lt; Previous</a>
+                        {% end %}
+                        {% if page < number_of_pages %}
+                            <a class='btn btn-sm btn-default' href='archive?page={{ page + 1 }}'>Next &gt;</a>
+                        {% end %}            
+                    </div>
                     
                     <table class="table table-striped">
                       <thead>
@@ -23,13 +33,6 @@
                         {% end %}
                       </tbody>
                     </table>
-
-                    {% if page > 1 %}
-                        <a class='btn btn-sm btn-default' href='archive?page={{ page - 1 }}'>&lt; Previous</a>
-                    {% end %}
-                    {% if page < number_of_pages %}
-                        <a class='btn btn-sm btn-default' href='archive?page={{ page + 1 }}'>Next &gt;</a>
-                    {% end %}              
 
                 {% else %}
                     <div class='well'>

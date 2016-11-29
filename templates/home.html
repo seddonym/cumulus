@@ -15,12 +15,13 @@
                     <div class='col-lg-8 col-lg-offset-2'>
                         {% if error %}
                             <div class='alert alert-danger'>
-                                <p>Sorry, we could not get that URL.  Please try again.</p>
+                                <p>Sorry, we could not get that URL.  Please <a href='/'>try again</a>.</p>
                             </div>
                         {% else %}
                             <div id='wordcloud'></div>
+                            <a href='/' class='btn btn-lg btn-default'>Create another</a>
                         {% end %}
-                        <a href='/' class='btn btn-lg btn-default'>Create another</a>
+                        
                     </div>
                 {% else %}
                     <div class='col-lg-8 col-lg-offset-2'>
