@@ -1,3 +1,9 @@
+"""
+Run this module to create the initial database tables.
+
+    python project/sqlalchemy_insert.py
+
+"""
 import sys
 from utils import create_cloudsql_engine
 from models import Base

@@ -11,6 +11,8 @@ CLOUDSQL_DATABASE = os.environ.get('CLOUDSQL_DATABASE')
 
 
 def create_cloudsql_engine():
+    """Creates and returns a SQLAlchemy engine that connects to Cloud SQL.
+    """
     # When deployed to App Engine, the `SERVER_SOFTWARE` environment variable
     # will be set to 'Google App Engine/version'.
     credentials = {
@@ -24,10 +26,7 @@ def create_cloudsql_engine():
             '?unix_socket=/cloudsql/{connection_name}'.format(**credentials)
     # If the unix socket is unavailable, then try to connect using TCP. This
     # will work if you're running a local MySQL server or using the Cloud SQL
-    # proxy, for example:
-    #
-    #   $ cloud_sql_proxy -instances=your-connection-name=tcp:3306
-    #
+    # proxy.
     else:
         connection_string = 'mysql+mysqldb://{user}:{password}'\
                             '@127.0.0.1:3306/{database}' \

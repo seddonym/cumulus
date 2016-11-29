@@ -14,8 +14,40 @@ from google.appengine.api import users
 from models import save_words, session, Word
 
 
-def administrator(method):
-    """Decorate with this method to restrict to site admins."""
+class BaseHandler(tornado.web.RequestHandler):
+    """Base RequestHandler for all handlers on the site.
+    Implements Google's authentication methods so we don't have to
+    implement any login ourselves.
+    """
+    def get_current_user(self):
+        """Returns the currently logged in user.
+        """
+        user = users.get_current_user()
+        if user:
+            user.administrator = users.is_current_user_admin()
+        return user
+
+    def get_login_url(self):
+        """Returns the URL for a user to log in.
+        """
+        return users.create_login_url(self.request.uri)
+
+    def get_template_namespace(self):
+        """Let the templates access the users module to generate login URLs.
+        """
+        namespace = super(BaseHandler, self).get_template_namespace()
+        namespace['users'] = users
+        return namespace
+
+
+def administrators_only(method):
+    """Decorate with this method to restrict to site admins.
+    Usage:
+        class MyHandler(BaseHandler):
+            @administrators_only
+            def get(self):
+                ...
+    """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.current_user:
@@ -31,25 +63,6 @@ def administrator(method):
         else:
             return method(self, *args, **kwargs)
     return wrapper
-
-
-class BaseHandler(tornado.web.RequestHandler):
-    """Implements Google Accounts authentication methods.
-    """
-    def get_current_user(self):
-        user = users.get_current_user()
-        if user:
-            user.administrator = users.is_current_user_admin()
-        return user
-
-    def get_login_url(self):
-        return users.create_login_url(self.request.uri)
-
-    def get_template_namespace(self):
-        # Let the templates access the users module to generate login URLs
-        namespace = super(BaseHandler, self).get_template_namespace()
-        namespace['users'] = users
-        return namespace
 
 
 class HomeHandler(BaseHandler):
@@ -77,6 +90,8 @@ class HomeHandler(BaseHandler):
         text = soup.get_text()
         all_words = re.findall(r'\w+', text)
 
+        # TODO - nltk is great for parsing words, but is difficult to deploy
+        # on Google Cloud.  Here's how we might do it:
         # import nltk
         # tagged_words = nltk.pos_tag(all_words)
         # cleaned_words = []
@@ -87,13 +102,22 @@ class HomeHandler(BaseHandler):
         #         if word_type not in PRESERVE_CASE_TYPES:
         #             word = word.lower()
         #         cleaned_words.append(word)
-        # TODO - improve
+        
         cleaned_words = [word.lower() for word in all_words]
+        
         # Remove any words that are above the max length
-        # TODO
+        cleaned_words = [word for word in cleaned_words \
+                         if len(word) > Word.MAX_WORD_LENGTH]
+        
+        # Remove some common articles and prepositions
+        IGNORE_WORDS = ('the', 'a', 'an', 'no' , 'with', 'at', 'from', 'into',
+                        'of', 'to', 'in', 'for', 'on', 'by', 'but')
+        cleaned_words = [word for word in cleaned_words if word in IGNORE_WORDS]
+        
+        # Get the 100 most common words
         most_common = Counter(cleaned_words).most_common(100)
 
-        # Save words
+        # Save the words in the database
         save_words(most_common)
 
         words = []
@@ -112,23 +136,25 @@ class ArchiveHandler(BaseHandler):
     """
     RESULTS_PER_PAGE = 30
 
-    @administrator
+    @administrators_only
     def get(self):
-        page = int(self.get_argument('page', default=1))
+        # Get all the words, ordered by most frequent first.
         all_words = session.query(Word).order_by(desc('frequency'))
+        
+        # Paginate, raising a 404 if the page isn't valid
+        page = int(self.get_argument('page', default=1))
         word_count = all_words.count()
         number_of_pages = int((Decimal(word_count) / self.RESULTS_PER_PAGE)
                               .quantize(1, ROUND_UP))
-        print('Page %s' % page)
-        print('Number of pages %s' % number_of_pages)
-        if page > number_of_pages:
+        if page < 0 or page > number_of_pages:
             raise tornado.web.HTTPError(404)
         offset = self.RESULTS_PER_PAGE * (page - 1)
         words = all_words.limit(self.RESULTS_PER_PAGE).offset(offset)
+        
         self.render("archive.html",
                     words=words, page=page, word_count=word_count,
                     number_of_pages=number_of_pages)
-
+    
 
 settings = {
     "site_title": u"Cumulus",

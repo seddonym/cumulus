@@ -16,6 +16,7 @@ Session = sessionmaker(bind=create_cloudsql_engine())
 session = Session()
 
 
+# Import the keypair from the environment variable
 if WORD_PRIVATE_KEY:
     keypair = RSA.importKey(WORD_PRIVATE_KEY)
 else:
