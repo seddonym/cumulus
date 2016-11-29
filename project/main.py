@@ -107,12 +107,15 @@ class HomeHandler(BaseHandler):
         
         # Remove any words that are above the max length
         cleaned_words = [word for word in cleaned_words \
-                         if len(word) > Word.MAX_WORD_LENGTH]
+                         if len(word) <= Word.MAX_WORD_LENGTH]
         
-        # Remove some common articles and prepositions
+        # Remove some common words that we're not interested in
         IGNORE_WORDS = ('the', 'a', 'an', 'no' , 'with', 'at', 'from', 'into',
-                        'of', 'to', 'in', 'for', 'on', 'by', 'but')
-        cleaned_words = [word for word in cleaned_words if word in IGNORE_WORDS]
+                        'of', 'to', 'in', 'for', 'on', 'by', 'but', 'she', 'he',
+                        'her', 'his', 'it', 'and', 'or', 's', 'as', 'we', 'or',
+                        'this', 'that', 'your', 'you')
+        cleaned_words = [word for word in cleaned_words \
+                         if word not in IGNORE_WORDS]
         
         # Get the 100 most common words
         most_common = Counter(cleaned_words).most_common(100)
