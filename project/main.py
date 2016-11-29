@@ -58,7 +58,7 @@ class HomeHandler(BaseHandler):
     def post(self):
         url = self.get_argument('url')
         html = urllib.urlopen(url).read()
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, 'html.parser')
         
         # kill all script and style elements
         for script in soup(["script", "style"]):
@@ -79,7 +79,8 @@ class HomeHandler(BaseHandler):
 #                 cleaned_words.append(word)
         # TODO - improve
         cleaned_words = [word.lower() for word in all_words]
-        
+        # Remove any words that are above the max length
+        # TODO
         most_common = Counter(cleaned_words).most_common(100)
         
         # Save words

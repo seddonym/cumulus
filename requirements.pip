@@ -4,4 +4,4 @@ SQLAlchemy==1.1.4
 pycrypto==2.6.1
 beautifulsoup4==4.5.1
 pyaml==16.11.4
-git+https://github.com/rutherford/nltk-gae.git@2.0.1rc4
+google-cloud-storage==0.21.0

@@ -4,20 +4,29 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 import hashlib
+import base64
+from Crypto.PublicKey import RSA
 from utils import create_cloudsql_engine
 
 
 WORD_HASH_SALT = os.environ.get('WORD_HASH_SALT')
+WORD_PRIVATE_KEY = os.environ.get('WORD_PRIVATE_KEY')
+
 
 Base = declarative_base()
 Session = sessionmaker(bind=create_cloudsql_engine())
 session = Session()
 
 
+keypair = RSA.importKey(WORD_PRIVATE_KEY)
+
+
 class Word(Base):
     __tablename__ = 'words'
+    
+    MAX_WORD_LENGTH = 256
     hash_id = Column(String(56), primary_key=True)
-    encrypted_text = Column(String(256), nullable=False)
+    encrypted_text = Column(String(MAX_WORD_LENGTH), nullable=False)
     frequency = Column(Integer, nullable=False)
 
     @classmethod
@@ -28,13 +37,15 @@ class Word(Base):
     
     @classmethod
     def encrypt_text(cls, text):
-        # TODO
-        return text
+        #if len(text) > cls.MAX_WORD_LENGTH:
+        #    raise ValueError('Could not encrypt {text} as it was above the maximum '
+        #                     'word length of {length}.'.format(text=text,
+        #                                                       length=cls.MAX_WORD_LENGTH))
+        return keypair.encrypt(text.encode('UTF'), 32)[0]
     
     @classmethod
     def decrypt_text(cls, text):
-        # TODO
-        return text
+        return keypair.decrypt(text)
     
     def __repr__(self):
         return "<Word {}>".format(self.hash_id)
