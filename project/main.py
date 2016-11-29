@@ -149,7 +149,7 @@ class ArchiveHandler(BaseHandler):
         word_count = all_words.count()
         number_of_pages = int((Decimal(word_count) / self.RESULTS_PER_PAGE)
                               .quantize(1, ROUND_UP))
-        if page < 0 or page > number_of_pages:
+        if page != 1 and (page < 0 or page > number_of_pages):
             raise tornado.web.HTTPError(404)
         offset = self.RESULTS_PER_PAGE * (page - 1)
         words = all_words.limit(self.RESULTS_PER_PAGE).offset(offset)
